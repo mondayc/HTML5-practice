@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Canvas AIP</title>
+</head>
+<body>
+	<canvas id="tree" style="background-color: #aeeffe">
+		
+	</canvas>
+<script type="text/javascript">
+	function TreeTop(context){
+
+  context.lineWidth = 4;
+  context.lineJoin = 'round';
+  context.strokeStyle = '#80cf4b';
+  context.fillStyle = '#92cf4b';
+  
+  context.beginPath();
+  context.moveTo(20,280);
+  context.lineTo(50,260);
+  context.lineTo(30,260);
+  context.lineTo(60,240);
+  context.lineTo(40,240);
+  context.lineTo(70,220);
+  context.lineTo(100,240);
+  context.lineTo(80,240);
+  context.lineTo(110,260);
+  context.lineTo(90,260);
+  context.lineTo(120,280);
+  context.closePath(20,280);
+}
+
+function drawTree(){
+  // 取得 canvas 元素 及其绘图上下文
+  var canvas = document.getElementById('tree');
+  var context = canvas.getContext('2d');
+  
+  // 设置属性
+  canvas.width = 400;
+  canvas.height = 400;
+  // 保存当前绘图状态
+  context.save();
+  TreeTop(context);
+  context.fill();
+  context.stroke();
+  
+  // context.fillStyle = '#9d7c42';
+  // context.fillRect(60,280,20,40);
+  // context.restore();
+  
+  // 画曲径小路
+  context.save();
+  context.beginPath();
+  context.moveTo(-2,376);
+  context.quadraticCurveTo(150,350,222,200);
+  context.quadraticCurveTo(300,70,405,100);
+  context.strokeStyle = '#9d7c42';
+  context.lineWidth = 20;
+  context.stroke();
+  context.restore();
+  
+  // 插入图片
+  // var bark = new Image();
+  // bark.src = "http://dogeclothing.com/wp-content/uploads/2014/02/doge-portrait-web-template.jpg";
+  // context.drawImage(bark,300,290,100,100);
+  
+  // 使用渐变
+  var trunkGradient = context.createLinearGradient(60,280,80,280);
+  trunkGradient.addColorStop(0,'#663300');
+  trunkGradient.addColorStop(0.4,'#996600');
+  trunkGradient.addColorStop(1,'#552200');
+  context.fillStyle = trunkGradient;
+  context.fillRect(60,280,20,40);
+  
+  var carnopyShadow = context.createLinearGradient(60,280,70,320);
+  carnopyShadow.addColorStop(0,'rgba(0,0,0,0.4)');
+  carnopyShadow.addColorStop(0.4,'rgba(0,0,0,0)');
+  context.fillStyle = carnopyShadow;
+  context.fillRect(60,280,20,40);
+  
+  var gravel = new Image();
+  gravel.src = "http://www.tetu.com.cn/UploadFile/SUNVP-L005.jpg";
+
+  context.strokeStyle = context.createPattern(gravel,'repeat');
+  context.lineWidth = 20;
+  context.stroke();
+  gravel.onload = function(){
+    drawTree();
+  }
+
+}
+
+  window.addEventListener("load",drawTree,true);
+</script>
+</body>
+</html>
