@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Video-1</title>
+	<style type="text/css">
+	
+	</style>
+</head>
+<body>
+	<video id="movies" autoplay oncanplay="startVideo()" onended="stopTimeline" autobuffer="true" width="800px" height="500px" onmousedown="this.play()" onmouseout="this.pause()">
+		<source src="01.mp4">
+	</video>
+	<canvas id="timeline" width="800px" height="500px">
+		
+	</canvas>
+	<script type="text/javascript">
+		// 抓取帧的时间间隔
+		var updateInterval = 5000;
+		var frameWidth = 200;
+		var frameHeight = 125;
+
+		var frameRows = 4;
+		var frameColums = 4;
+		var frameGrid = frameRows * frameColums;
+
+		// 当前帧
+		var frameCount = 0;
+		// 播放后取消计时器
+		var IntervalId;
+		var videoStarted = false;
+
+		function updateFrame(){
+			var video = document.getElementById('movies');
+			var timeline = document.getElementById('timeline');
+			var context = timeline.getContext('2d');
+
+			var framePosition = frameCount % frameGrid;
+			var frameX = (framePosition % frameColums) * frameWidth;
+			var frameY = (Math.floor(framePosition / frameRows))* frameHeight;
+
+			context.drawImage(video,0,0,1440,900,frameX,frameY,frameWidth,frameHeight);
+
+			frameCount++;
+		}
+
+		function startVideo(){
+			// 只在视频播放第一次时设置计时器
+			if (videoStarted)
+				return;
+				videoStarted = true;
+			// 计算初始帧，定期创建其他帧
+				updateFrame();
+				IntervalId = setInterval(updateFrame,updateInterval);
+		}
+			// 通过单击来定位视频
+			var timeline = document.getElementById('timeline');
+			timeline.onclick = function(evt){
+				var offX = evt.layerX - timeline.offsetLeft;
+				var offY = evt.layerY - timeline.offsetTop;
+
+				//  计算以零为基准索引的网格中哪帧被单击
+				var clickedFrame = Math.floor(offY / frameHeight) *frameRows;
+				clickedFrame += Math.floor(offX / frameWidth);
+
+				// 视频开始后已播放到多少帧
+				var seekedFrame = (((Math.floor(frameCount / frameGrid))*frameGrid) + clickedFrame);
+				// 如果用户单击的帧在当前帧以前，则假定为上一轮的帧
+				if (clickedFrame>(frameCount % 16)) {
+					seekedFrame -= frameGrid;
+				}
+				// 不允许跳出当前帧
+				if (seekedFrame<0) {return;}
+
+				var video = document.getElementById('movies');
+				video.currentTime = seekedFrame * updateInterval / 1000;
+
+				frameCount = seekedFrame;
+			}
+		function stopTimeline(){
+			clearInterval(IntervalId);
+		}
+
+	</script>
+</body>
+</html>
